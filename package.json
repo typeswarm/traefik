@@ -2,7 +2,8 @@
     "name": "@typeswarm/traefik",
     "version": "0.0.1",
     "description": "",
-    "main": "index.js",
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
     "files": [
         "lib",
         "src"
@@ -10,7 +11,9 @@
     "scripts": {
         "example:application-stack": "typeswarm render -c src/example/application-stack.ts -o application-stack.compose",
         "example:router": "typeswarm render -c src/example/router.ts -o router.compose",
-        "examples": "npm run example:application-stack && npm run example:router"
+        "examples": "npm run example:application-stack && npm run example:router",
+        "build": "tsc",
+        "prepublish": "npm run build"
     },
     "dependencies": {
         "@types/node": "^14.6.2",

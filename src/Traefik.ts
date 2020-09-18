@@ -2,7 +2,7 @@ import { ComposeSpecification } from '@typeswarm/cli';
 import { CERT_RESOLVER } from './constants';
 
 export interface TraefikOptions {
-    debug: boolean;
+    debug?: boolean;
     serviceName?: string;
     image?: string;
     tag?: string;
@@ -14,7 +14,7 @@ export interface TraefikOptions {
 }
 
 export const Traefik = ({
-    debug,
+    debug = false,
     serviceName = 'traefik',
     image = 'traefik',
     tag = 'v2.2',
