@@ -69,7 +69,7 @@ import { publishToTraefik } from '@typeswarm/traefik';
 
 //This is a service, which you want to publish to world
 let wordpress: DefinitionsService = {
-    image: 'wordpress',
+    image: 'wordpress:latest',
     environment: {
         WORDPRESS_DB_HOST: conf.dbHost,
         WORDPRESS_DB_USER: conf.dbUser,
