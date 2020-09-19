@@ -25,7 +25,7 @@ import {
     ComposeSpecification,
     mergeComposeConfigurations,
 } from '@typeswarm/cli';
-import { Traefik } from '../Traefik';
+import { Traefik } from '@typeswarm/traefik';
 
 //This is your stack
 let spec: ComposeSpecification = {
@@ -59,6 +59,14 @@ export { spec };
 `publishToTraefik` publishes a service through http(s) using labels.
 
 ```ts
+import {
+    ComposeSpecification,
+    DefinitionsService,
+} from '@typeswarm/cli';
+
+import { publishToTraefik } from '@typeswarm/traefik';
+
+
 //This is a service, which you want to publish to world
 let wordpress: DefinitionsService = {
     image: 'wordpress',
