@@ -39,7 +39,7 @@ let spec: ComposeSpecification = {
     //...etc
 };
 
-//This is how you add Traefic instance
+//This is how you add Traefik instance
 spec = mergeComposeConfigurations(
     spec,
     Traefik({
@@ -71,7 +71,7 @@ let wordpress: DefinitionsService = {
     volumes: ['wordpress:/var/www/html'],
 };
 
-//This is how you show it to Traefic router
+//This is how you show it to Traefik router
 wordpress = publishToTraefik({
     host: conf.domain,
     port: 80,
