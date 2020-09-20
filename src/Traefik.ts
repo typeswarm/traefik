@@ -1,4 +1,7 @@
-import { ComposeSpecification } from '@typeswarm/cli';
+import {
+    StrictPortMapping,
+    StrictSpecification,
+} from '@typeswarm/cli/lib/normalize';
 import { CERT_RESOLVER } from './constants';
 
 export interface TraefikOptions {
@@ -23,7 +26,7 @@ export const Traefik = ({
     exposeDashboard = false,
     externalNetwork,
     letsencryptVolume = 'traefik_letsencrypt_data',
-}: TraefikOptions): ComposeSpecification => {
+}: TraefikOptions): StrictSpecification => {
     const command = [
         '--api.insecure=true',
         '--providers.docker=true',
@@ -53,30 +56,33 @@ export const Traefik = ({
         }
     }
 
-    const ports = ['80:80'];
+    const ports: StrictPortMapping[] = [{ published: 80, target: 80 }];
     if (https) {
-        ports.push('443:443');
+        ports.push({ published: 443, target: 443 });
     }
     if (exposeDashboard) {
-        ports.push('8080:8080');
+        ports.push({ published: 8080, target: 8080 });
     }
 
-    const spec: ComposeSpecification = {
+    const spec: StrictSpecification = {
         services: {
             [serviceName]: {
                 image: `${image}:${tag}`,
                 command,
                 ports,
                 volumes: [
-                    `${letsencryptVolume}:/letsencrypt`,
-                    '/var/run/docker.sock:/var/run/docker.sock:ro',
+                    {
+                        type: 'volume',
+                        source: letsencryptVolume,
+                        target: '/letsencrypt',
+                    },
                 ],
                 deploy: {
                     placement: {
                         constraints: ['node.role == manager'],
                     },
                 },
-                networks: externalNetwork ? [externalNetwork] : [],
+                networks: externalNetwork ? { externalNetwork: null } : {},
             },
         },
         networks: externalNetwork

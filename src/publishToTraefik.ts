@@ -1,4 +1,5 @@
 import { DefinitionsService } from '@typeswarm/cli';
+import { parseService, StrictService } from '@typeswarm/cli/lib/normalize';
 import immer from 'immer';
 import { CERT_RESOLVER } from './constants';
 
@@ -18,18 +19,13 @@ export const publishToTraefik = ({
     externalHttps = true,
     externalNetwork,
     internalHttps = false,
-}: PublishToTraefikOptions) => (
-    service: DefinitionsService
-): DefinitionsService => {
-    return immer(service, (service: DefinitionsService) => {
+}: PublishToTraefikOptions) => (service: StrictService): StrictService => {
+    return immer(parseService(service), (service: StrictService) => {
         if (!service.deploy) {
             service.deploy = {};
         }
         if (!service.deploy.labels) {
             service.deploy.labels = {};
-        }
-        if (Array.isArray(service.deploy.labels)) {
-            throw new Error('service.deploy.labels should be an object');
         }
 
         service.deploy.labels = {
@@ -49,19 +45,11 @@ export const publishToTraefik = ({
             service.deploy.labels['traefik.docker.network'] = externalNetwork;
         }
 
-        if (!externalNetwork) {
-            return;
+        if (!service.networks) {
+            service.networks = {};
         }
 
-        if (!service.networks) {
-            service.networks = [];
-        }
-        if (Array.isArray(service.networks)) {
-            if (!service.networks.includes('default')) {
-                service.networks.push('default');
-            }
-            service.networks.push(externalNetwork);
-        } else {
+        if (externalNetwork) {
             service.networks[externalNetwork] =
                 service.networks[externalNetwork] ?? null;
         }

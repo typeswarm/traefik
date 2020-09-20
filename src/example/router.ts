@@ -4,12 +4,10 @@ import {
 } from '@typeswarm/cli';
 import { Traefik } from '../Traefik';
 
-let spec: ComposeSpecification = {
-    version: '3.7',
-};
-
-spec = mergeComposeConfigurations(
-    spec,
+const spec = mergeComposeConfigurations(
+    {
+        version: '3.7',
+    },
     Traefik({
         debug: true,
         https: true,

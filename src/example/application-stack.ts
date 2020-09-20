@@ -1,5 +1,11 @@
-import { ComposeSpecification, DefinitionsService } from '@typeswarm/cli';
+import {
+    ComposeSpecification,
+    DefinitionsService,
+    wrap,
+    wrapService,
+} from '@typeswarm/cli';
 import { publishToTraefik } from '../publishToTraefik';
+import { StrictService } from '@typeswarm/cli/lib/normalize';
 
 const conf = {
     dbHost: 'db',
@@ -9,7 +15,7 @@ const conf = {
     domain: 'wp.example.com',
 };
 
-let wordpress: DefinitionsService = {
+const wordpress: StrictService = wrapService({
     image: 'wordpress',
     environment: {
         WORDPRESS_DB_HOST: conf.dbHost,
@@ -18,15 +24,17 @@ let wordpress: DefinitionsService = {
         WORDPRESS_DB_NAME: conf.dbName,
     },
     volumes: ['wordpress:/var/www/html'],
-};
-
-wordpress = publishToTraefik({
-    host: conf.domain,
-    port: 80,
-    serviceName: 'wordpress',
-    externalHttps: true,
-    externalNetwork: 'shared_proxy',
-})(wordpress);
+})
+    .with(
+        publishToTraefik({
+            host: conf.domain,
+            port: 80,
+            serviceName: 'wordpress',
+            externalHttps: true,
+            externalNetwork: 'shared_proxy',
+        })
+    )
+    .value();
 
 const db: DefinitionsService = {
     image: 'mysql:5.7',
